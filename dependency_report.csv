@@ -1,0 +1,35 @@
+FunctionName,SourcePath
+PID_DecodeFromSpikeCellArray,D:\Code\NeuralDataAnalysis\Functions\PID_DecodeFromSpikeCellArray.m
+allen_analyseSesssion_DotMotionSpeedTuning,D:\Code\HorrocksSaleem_AllenVisSpeed\ProcessSessions\allen_analyseSesssion_DotMotionSpeedTuning.m
+allen_analyseSesssion_PIDSpeedTuning,D:\Code\HorrocksSaleem_AllenVisSpeed\ProcessSessions\allen_analyseSesssion_PIDSpeedTuning.m
+allen_analyseSesssion_TuningDGs,D:\Code\HorrocksSaleem_AllenVisSpeed\ProcessSessions\allen_analyseSesssion_TuningDGs.m
+calcMI,D:\Code\NeuralDataAnalysis\Functions\calcMI.m
+calcReliability,D:\Code\NeuralDataAnalysis\Functions\calcReliability.m
+calc_kfold_R2,D:\Code\NeuralDataAnalysis\Functions\calc_kfold_R2.m
+chi2test_countTable,D:\Code\GenericFunctions\chi2test_countTable.m
+cmocean,D:\Code\GenericFunctions\Plotting\colormaps\cmocean.m
+compare,compare is a Java method
+crameri,D:\Code\GenericFunctions\Plotting\colormaps\crameri.m
+defaultAxesProperties,D:\Code\GenericFunctions\Plotting\defaultAxesProperties.m
+fitGaussianTemplates_tuning,D:\Code\NeuralDataAnalysis\Functions\fitGaussianTemplates_tuning.m
+format_p_values,D:\Code\GenericFunctions\format_p_values.m
+genTrialStructFromAllenData,D:\Code\HorrocksSaleem_AllenVisSpeed\PreprocessSessions\genTrialStructFromAllenData.m
+genUnitStructFromAllenData,D:\Code\HorrocksSaleem_AllenVisSpeed\PreprocessSessions\genUnitStructFromAllenData.m
+getAllenAcronymFromCCF,D:\Code\HorrocksSaleem_AllenVisSpeed\PreprocessSessions\getAllenAcronymFromCCF.m
+getBinnedSpikeCounts,D:\Code\NeuralDataAnalysis\Functions\getBinnedSpikeCounts.m
+getRunAndPupilInfo,D:\Code\HorrocksSaleem_AllenVisSpeed\PreprocessSessions\getRunAndPupilInfo.m
+holmbonferroni,D:\Code\GenericFunctions\holmbonferroni.m
+holmbonferroni_matrix,D:\Code\GenericFunctions\holmbonferroni_matrix.m
+nansem,D:\Code\GenericFunctions\nansem.m
+pairedBoxPlot,D:\Code\GenericFunctions\Plotting\pairedBoxPlot.m
+preprocessAllenSession,D:\Code\HorrocksSaleem_AllenVisSpeed\PreprocessSessions\preprocessAllenSession.m
+prop,D:\Code\GenericFunctions\prop.m
+pyargs,pyargs is a built-in method
+readNPY,D:\Code\GenericFunctions\npy-matlab\readNPY.m
+scatterWithMarginals,D:\Code\GenericFunctions\scatterWithMarginals.m
+sem,D:\Code\GenericFunctions\sem.m
+shadedErrorBar,D:\Code\GenericFunctions\Plotting\shadedErrorBar.m
+slanCM,D:\Code\GenericFunctions\Plotting\colormaps\slanCM.m
+string,string is a built-in method
+tab20,D:\Code\GenericFunctions\Plotting\colormaps\tab20.m
+units,C:\toolbox\spm12\@meeg\units.m

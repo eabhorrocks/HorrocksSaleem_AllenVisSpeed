@@ -359,7 +359,7 @@ cellfun(@mean, {runta.tuned_r2}); cellfun(@sem,  {runta.tuned_r2})]
 
 
 
-%% Supp. Figure4 plot tuning strength cdfs, all areas, by state
+%% Supp. Figure 5 plot tuning strength cdfs, all areas, by state
 
 figure
     subplot(121), 

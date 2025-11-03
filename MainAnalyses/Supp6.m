@@ -1,4 +1,4 @@
-%% Supp Figure 5: Compare tuning strength with reliability and mutual informatin
+%% Supp Figure 6: Compare tuning strength with reliability and mutual informatin
 allColors = tab20(20);
 areacols = allColors([1 3 5 7 9 11 13 17],:);
 areas = {'VISp', 'VISl', 'VISal', 'VISrl', 'VISam', 'VISpm', 'LGd', 'LP'};

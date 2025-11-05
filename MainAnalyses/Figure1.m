@@ -192,7 +192,7 @@ for igc = 1:4
     SuppVals_mean(igc) = mean(gc(igc).nSuppvals);
     SuppVals_sem(igc) = sem(gc(igc).nSuppvals);
 
-    countTable(igc,:) = [sum(gc(igc).nExcvals), sum(gc(igc).nSuppvals)];
+    % countTable(igc,:) = [sum(gc(igc).nExcvals), sum(gc(igc).nSuppvals)];
 end
 
 figure, hold on
@@ -200,8 +200,26 @@ bar(1:4, [ExcVals_mean(plotOrder); SuppVals_mean(plotOrder)],'stacked')
 ylabel('# Significant responses')
 legend({'excited', 'suppressed'})
 
-% X2 test of independence
-[X2stat, p, df] = chi2test_countTable(countTable)
+% % X2 test of independence
+% [X2stat, p, df] = chi2test_countTable(countTable)
+
+%% kruskal-wallis test
+
+% for all cells with atleast 1 sig response, calculate proportion of
+% excitatory responses, then use kruskal-wallis test to test for
+% significant differences between tuning classes
+
+for igc = 1:4
+    idx = find(gc(igc).nSigvals>0);
+    gc(igc).propExc = gc(igc).nExcvals(idx)./(gc(igc).nSuppvals(idx)+gc(igc).nExcvals(idx));
+end
+
+tuning_class = cellfun(@numel, {gc.propExc});
+tuning_class = repelem(1:4, tuning_class);
+excitatory_index = cat(1,gc.propExc);
+
+[p, tbl, stats] = kruskalwallis(excitatory_index, tuning_class(:), 'on');
+
 
 %% p(SSI|pref speed) conditional distribution
 

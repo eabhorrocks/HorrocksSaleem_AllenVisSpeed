@@ -143,12 +143,18 @@ for iarea = 1:8
     H(iarea*2-1)=-1;
     H(iarea*2)=1;
     H;
-    ta(iarea).pValue = coefTest(glme,H);
+    [ta(iarea).pValue, ta(iarea).F, ta(iarea).df1, ta(iarea).df2] = coefTest(glme,H);
 end
 
 % mult-comparisons correction
 p_adj = holmbonferroni([ta.pValue]);
 format_p = format_p_values(p_adj)
+
+% format data for google sheet stats
+[F_string_list] = formatFStats([ta.F], [ta.df1], [ta.df2])
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 
 %% plot p(tuned) difference maps between areas with significant tests, separately for stationary and locomotion
@@ -170,12 +176,14 @@ for iarea1 = 1:8
         H=zeros(1,16);
         H(iarea1*2-1)=-1;
         H(iarea2*2-1)=1;
-        statP(iarea1,iarea2) = coefTest(glme,H);
+        [statP(iarea1,iarea2), statF(iarea1,iarea2), statdf1(iarea1,iarea2), statdf2(iarea1,iarea2)] ...
+            = coefTest(glme,H);
 
         H=zeros(1,16);
         H(iarea1*2)=-1;
         H(iarea2*2)=1;
-        runP(iarea1,iarea2) = coefTest(glme,H);
+        [runP(iarea1,iarea2), runF(iarea1,iarea2), rundf1(iarea1,iarea2), rundf2(iarea1,iarea2)] ...
+            = coefTest(glme,H);
 
     end
 end
@@ -223,6 +231,23 @@ ax=gca; ax.XTick = 1:8; ax.YTick = 1:8; ax.XTickLabels = areas; ax.YTickLabels =
 box on
 xlim([0.5, 8.5]), ylim([0.5 8.5])
 defaultAxesProperties(gca,false)
+
+
+% format data for google sheet stats
+[padj_list, F_list, df_list,F_string_list] = extractPairwiseStats(statPadj, statF, statdf1, statdf2)
+
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
+
+% format data for google sheet stats
+[padj_list, F_list, df_list,F_string_list] = extractPairwiseStats(runPadj, runF, rundf1, rundf2)
+
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
+
+
 
 %% tuning strenth distributions
 
@@ -317,11 +342,16 @@ pvals = nan(1,8);
 for iarea1 = 1:8
     H_temp = H;
     H_temp(iarea1) = -1; H_temp(iarea1+8) = 1;
-    pvals(iarea1) = coefTest(lme,H_temp);
+    [pvals(iarea1), Fvals(iarea1), df1(iarea1), df2(iarea1)] = coefTest(lme,H_temp);
 end
 
 pvals = pvals(sortidx);
 pvals_adj = holmbonferroni(pvals)
+
+[F_string_list] = formatFStats(Fvals, df1, df2)
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 %% lme for tuning strength, only for tuned cells 
 
@@ -340,7 +370,7 @@ pvals = nan(1,8);
 for iarea1 = 1:8
     H_temp = H;
     H_temp(iarea1) = -1; H_temp(iarea1+8) = 1;
-    pvals(iarea1) = coefTest(lme,H_temp);
+    [pvals(iarea1), Fvals(iarea1), df1(iarea1), df2(iarea1)] = coefTest(lme,H_temp);
 end
 
 pvals = pvals(sortidx);
@@ -357,7 +387,10 @@ end
 tuningStrengthForTunedCells = [cellfun(@mean, {statta.tuned_r2}); cellfun(@sem,  {statta.tuned_r2});...
 cellfun(@mean, {runta.tuned_r2}); cellfun(@sem,  {runta.tuned_r2})]
 
-
+[F_string_list] = formatFStats(Fvals, df1, df2)
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 %% Supp. Figure 5 plot tuning strength cdfs, all areas, by state
 

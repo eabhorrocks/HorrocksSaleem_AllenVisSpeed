@@ -1,6 +1,6 @@
 %% load data
 
-toAnalyse = 'FC'; % 'FC' or 'BO'
+toAnalyse = 'BO'; % 'FC' or 'BO'
 
 if strcmp(toAnalyse, 'FC')
     dataDir = 'D:\AllenMatFiles\FC';

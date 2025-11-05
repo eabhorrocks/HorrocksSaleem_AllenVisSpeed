@@ -109,7 +109,7 @@ areaVec = cat(1,ta.areaVec);
 tbl = table(tunedVec, stateVec, sessionVec,tfVec,RFVec,areaVec,...
     'VariableNames', {'tunedFlag', 'state', 'session','tf','RF','area'});
 
-f = 'tunedFlag ~ -1 + area:state';
+f = 'tunedFlag ~ -1 + area:state'; % reduced models performs best
 glme = fitglme(tbl,f,'DummyVarCoding','full','Distribution','binomial');
 
 for iarea = 1:8
@@ -117,11 +117,16 @@ for iarea = 1:8
     H(iarea*2-1)=-1;
     H(iarea*2)=1;
     H;
-    ta(iarea).pValue2 = coefTest(glme,H);
+    [ta(iarea).pValue2, Fvals(iarea), df1(iarea), df2(iarea)] = coefTest(glme,H);
 end
 
 padj = holmbonferroni([ta.pValue2]);
 [p_str, p_stars] = format_p_values(padj)
+
+[F_string_list] = formatFStats(Fvals, df1, df2)
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 %% plot p(tuned) difference maps with significant tests for stationary and locomotion
 
@@ -142,12 +147,14 @@ for iarea1 = 1:8
         H=zeros(1,16);
         H(iarea1*2-1)=-1;
         H(iarea2*2-1)=1;
-        statP(iarea1,iarea2) = coefTest(glme,H);
+        [statP(iarea1,iarea2), statF(iarea1,iarea2), statdf1(iarea1,iarea2), statdf2(iarea1,iarea2)] ...
+            = coefTest(glme,H);
 
         H=zeros(1,16);
         H(iarea1*2)=-1;
         H(iarea2*2)=1;
-        runP(iarea1,iarea2) = coefTest(glme,H);
+        [runP(iarea1,iarea2), runF(iarea1,iarea2), rundf1(iarea1,iarea2), rundf2(iarea1,iarea2)] ...
+            = coefTest(glme,H);
 
     end
 end
@@ -197,6 +204,25 @@ box on
 xlim([0.5, 8.5]), ylim([0.5 8.5])
 defaultAxesProperties(gca,false)
 
+
+% format for stats sheet
+% format data for google sheet stats
+[padj_list, F_list, df_list,F_string_list] = extractPairwiseStats(statPadj, statF, statdf1, statdf2)
+
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
+
+% format data for google sheet stats
+[padj_list, F_list, df_list,F_string_list] = extractPairwiseStats(runPadj, runF, rundf1, rundf2)
+
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
+
+
+
+
 %% Tuning strength survival functions and LME model
 
 figure
@@ -209,7 +235,7 @@ for iarea = 1:8
     [f, x] = ecdf(statvals);
     plot(x,1-f,'Color', areacols(iarea,:).*0.7);
     [f, x] = ecdf(runvals);
-    plot(x,1-f,'Color', areaconvals(iarea,:));
+    plot(x,1-f,'Color', areacols(iarea,:));
     xlim([0 1])
     ylim([0 0.8])
     grid on
@@ -240,11 +266,16 @@ pvals = nan(1,8);
 for iarea1 = 1:8
     H_temp = H;
     H_temp(iarea1*2-1) = -1; H_temp(iarea1*2) = 1;
-    pvals(iarea1) = coefTest(lme,H_temp);
+    [pvals(iarea1), Fvals(iarea1), df1(iarea1), df2(iarea1)] = coefTest(lme,H_temp);
 end
 
 padj = holmbonferroni(pvals);
 [p_str, p_stars] = format_p_values(padj)
+
+[F_string_list] = formatFStats(Fvals, df1, df2)
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 %% example tuning curves
 

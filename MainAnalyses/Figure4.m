@@ -107,9 +107,14 @@ pvals = nan(1,8);
 for iarea1 = 1:8
     H_temp = H;
     H_temp(iarea1*2-1) = -1; H_temp(iarea1*2) = 1;
-    pvals(iarea1) = coefTest(lme,H_temp); %
+    [pvals(iarea1), Fvals(iarea1), df1(iarea1), df2(iarea1)] = coefTest(lme,H_temp); %
 end
 
+% format data for google sheet stats
+[F_string_list] = formatFStats(Fvals, df1, df2)
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
 
 pvals_adj = holmbonferroni(pvals)
 

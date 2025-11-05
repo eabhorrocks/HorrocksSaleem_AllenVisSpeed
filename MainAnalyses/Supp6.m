@@ -1,4 +1,6 @@
 %% Supp Figure 6: Compare tuning strength with reliability and mutual informatin
+% load('goodUnits.mat')
+
 allColors = tab20(20);
 areacols = allColors([1 3 5 7 9 11 13 17],:);
 areas = {'VISp', 'VISl', 'VISal', 'VISrl', 'VISam', 'VISpm', 'LGd', 'LP'};
@@ -43,7 +45,8 @@ for iarea = 1:8
     axScatter.XLabel.String = 'Reliability';  axScatter.YLabel.String = 'Tuning Strength (R^2)'; 
     defaultAxesProperties(axScatter,false)
     % get correlation and add to axes
-    [rho,pval] = corr(areaTable.allreli,areaTable.allr2, Rows="complete");
+    [rho,pval] = corr(areaTable.allreli,areaTable.allr2, Rows="complete", Type="Spearman");
+    rho_reli(iarea) = rho; p_reli(iarea)=pval;
     % Format rho
     rho_str = sprintf('%.2g', rho);
     % Format p-value in scientific notation if very small
@@ -61,7 +64,9 @@ for iarea = 1:8
     axScatter.XLabel.String = 'Mutual Information (bits)';  axScatter.YLabel.String = 'Tuning Strength (R^2)'; 
     defaultAxesProperties(axScatter,false)
     % get correlation and add to axes
-    [rho,pval] = corr(areaTable.allMI,areaTable.allr2, Rows="complete");
+    [rho,pval] = corr(areaTable.allMI,areaTable.allr2, Rows="complete", Type="Spearman");
+    rho_mi(iarea) = rho; p_mi(iarea)=pval;
+
     % Format rho
     rho_str = sprintf('%.2g', rho);
     % Format p-value in scientific notation if very small

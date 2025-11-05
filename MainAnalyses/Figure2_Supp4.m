@@ -97,7 +97,7 @@ end
 pArray = nan(8);
 for iarea1 = 1:8
     for iarea2 = 1:8
-        [~, pArray(iarea1,iarea2), ~] = chi2test_countTable(countTable([iarea1 iarea2],:));
+        [X2array(iarea1,iarea2), pArray(iarea1,iarea2), df(iarea1,iarea2)] = chi2test_countTable(countTable([iarea1 iarea2],:));
     end
 end
 padj = holmbonferroni_matrix(pArray);
@@ -122,6 +122,11 @@ hold on
 for iarea = 1:numel(areas)
     plot([iarea+0.5, iarea+0.5], [0 8.5],'k');
     plot([0 8.5], [iarea+0.5 iarea+0.5],'k')
+end
+
+[p_list, X2_list, df_list, str_list] = extractPairwiseStats(padj, X2array, df);
+for i = 1:numel(str_list)
+    fprintf('%s\n', str_list{i}); % Prints just the string
 end
 
 
@@ -167,14 +172,15 @@ tbl = table(allPrefSpeeds, allGaussChar, allAreaVec,allDir, allSession,...
     'VariableNames', {'prefSpeeds', 'gaussChar', 'areas', 'dir', 'session'});
 
 f = 'prefSpeeds ~ -1 + areas + (1|session) + (1|dir)';
-lme = fitlme(tbl,f,'dummyVarCoding','full');
+lme = fitlme(tbl,f,'dummyVarCoding','full')
 
 % pairwise F-tests
 for iarea1 = 1:8
     for iarea2 = 1:8
         H=zeros(1,8);
         H(iarea1)=1;H(iarea2)=-1;
-        pvals(iarea1,iarea2) = coefTest(lme,H);
+        [pvals(iarea1,iarea2), F(iarea1,iarea2), df1(iarea1,iarea2), df2(iarea1,iarea2)]...
+            = coefTest(lme,H);
     end
 end
 
@@ -210,6 +216,15 @@ xlim([0.5, 8.5]), ylim([0.5 8.5])
 defaultAxesProperties(gca,false)
 
 
+% format data for google sheet stats
+[padj_list, F_list, df_list,F_string_list] = extractPairwiseStats(padj, F, df1, df2)
+
+for i = 1:numel(F_string_list)
+    fprintf('%s\n', F_string_list{i}); % Prints just the string
+end
+
+
+
 
 
 %% Variance of preferred speed distributions
@@ -243,7 +258,7 @@ for iarea1 = 1:8
         else
             group = repelem([iarea1, iarea2], [cellfun(@numel, {ta([iarea1, iarea2]).prefSpeeds})]);
             vals = [ta([iarea1, iarea2]).prefSpeeds];
-            pArray(iarea1,iarea2) = vartestn(vals(:),group(:), 'TestType', 'LeveneQuadratic','display', 'off');
+            [pArray(iarea1,iarea2), stats(iarea1,iarea2)] = vartestn(vals(:),group(:), 'TestType', 'LeveneQuadratic','display', 'off');
         end
     end
 end
@@ -276,3 +291,25 @@ end
 ax=gca; ax.XTick = 1:8; ax.YTick = 1:8; ax.XTickLabels = areas; ax.YTickLabels = areas;
 
 defaultAxesProperties(gca, false)
+
+[padj_list, F_list, df_list, F_string_list] = extractPairwiseStats(p_adj, stats)
+
+% get pairwise test results in order for google sheet
+num_pairs = (numel(areas) * (numel(areas)-1))/2;
+pairwise_list_padj = nan(num_pairs, 1);
+pairwise_list_F = nan(num_pairs, 1);
+
+
+% Loop through the upper triangle row-by-row
+k = 1; % This is our list index
+for iarea1 = 1:numel(areas)-1
+    for iarea2 = (iarea1 + 1):numel(areas)
+        % This loop gets M(1,2), M(1,3)...M(1,8), then
+        % M(2,3), M(2,4)...M(2,8), etc.
+        pairwise_list_padj(k) = padj(iarea1, iarea2);
+        pairwise_list_F(k) = stats(iarea1, iarea2).fstat;
+        pairwise_list_df(k,:) = stats(iarea1,iarea2).df;
+        k = k + 1;
+    end
+end
+
